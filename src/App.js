@@ -4,12 +4,16 @@ import Form from './components/Form';
 import TodoList from './components/TodoList';
 
 function App() {
-  const [ inputText, setInputText ] = useState('');
-  const [ todos, setTodos ] = useState([]);
-  const [ status, setStatus ] = useState('all');
-  const [ filteredTodos, setFilteredTodos ] = useState([]);
+  const [inputText, setInputText] = useState('');
+  const [todos, setTodos] = useState([]);
+  const [status, setStatus] = useState('all');
+  const [filteredTodos, setFilteredTodos] = useState([]);
   useEffect(() => {
-   filterHandler();
+    getLocalTodos();
+  }, []);
+  useEffect(() => {
+    filterHandler();
+    saveLocalTodos();
   }, [todos, status]);
   const filterHandler = () => {
     let isCompleted;
@@ -27,6 +31,17 @@ function App() {
       setFilteredTodos(todos);
     }
   };
+  const saveLocalTodos = () => {
+    localStorage.setItem('todos', JSON.stringify(todos));
+  };
+  const getLocalTodos = () => {
+    if (localStorage.getItem('todos') === null) {
+      localStorage.setItem('todos', []);
+    } else {
+      let local = JSON.parse(localStorage.getItem('todos'));
+      setTodos(local);
+    }
+  };
   return (
     <div className="App">
       <header>
@@ -38,7 +53,7 @@ function App() {
         setTodos={setTodos}
         setInputText={setInputText}
         setStatus={setStatus}
-        />
+      />
       <TodoList
         todos={todos}
         setTodos={setTodos}
